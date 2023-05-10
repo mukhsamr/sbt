@@ -21,8 +21,9 @@ return new class extends Migration
             $table->unsignedInteger('tinggi_badan')->nullable();
             $table->unsignedInteger('berat_badan')->nullable();
             $table->string('catatan_siswa')->nullable();
-            $table->string('foto')->nullable();
             $table->foreignIdFor(Parents::class)->constrained()->restrictOnDelete()->cascadeOnUpdate();
+            $table->integer('anak_ke')->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

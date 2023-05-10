@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('password');
-            $table->string('level')->nullable();
+            $table->string('role')->nullable();
             $table->rememberToken();
             $table->foreignIdFor(Teacher::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();

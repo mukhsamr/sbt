@@ -5,12 +5,12 @@ import { UserIcon, HomeIcon, InboxStackIcon, Squares2X2Icon, CalendarIcon } from
 import { Link as A } from "@inertiajs/vue3";
 import { useSessionStore } from "@/Stores/Session";
 
-const user = useSessionStore().user
+
 const isHide = ref(window.screen.width < 992)
+const user = useSessionStore().user
 
-
-function userLevel(levels) {
-    return levels.includes(user.level)
+function userRole(roles) {
+    return roles.includes(user.role)
 }
 
 function toggle() {
@@ -48,7 +48,7 @@ defineExpose({
             <hr class="my-2">
 
             <!-- Bidang -->
-            <template v-if="userLevel(['admin', 'tu'])">
+            <template v-if="userRole(['admin', 'tu'])">
                 <Collapse :icon="InboxStackIcon" text="PLP" :isActive="$page.url.startsWith('/plp')">
                     <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
                         data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-tahfidz">Tahfidz</A>
@@ -63,7 +63,7 @@ defineExpose({
 
 
             <!-- Kelas -->
-            <template v-if="userLevel(['admin', 'tu'])">
+            <template v-if="userRole(['admin', 'tu'])">
                 <Link :icon="Squares2X2Icon" :isActive="$page.url.startsWith('/kelas-payung')" href="/kelas-payung">
                 Kelas Payung
                 </Link>
@@ -75,14 +75,14 @@ defineExpose({
             <hr class="my-2">
 
             <!-- Siswa -->
-            <template v-if="userLevel(['admin', 'tu'])">
+            <template v-if="userRole(['admin', 'tu'])">
                 <Link :icon="UserIcon" :isActive="$page.url.startsWith('/siswa')" href="/siswa">
                 Siswa
                 </Link>
             </template>
 
             <!-- Semester -->
-            <template v-if="userLevel(['admin'])">
+            <template v-if="userRole(['admin'])">
                 <Link :icon="CalendarIcon" :isActive="$page.url.startsWith('/semester')" href="/semester">
                 Semester
                 </Link>

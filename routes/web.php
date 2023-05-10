@@ -22,7 +22,7 @@ Route::middleware('auth')->get('/', [HomeController::class, 'index']);
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'index')->middleware('guest')->name('login');
     Route::post('auth', 'auth')->name('auth');
-    Route::get('logout', 'logout');
+    Route::get('logout', 'logout')->name('logout');
 });
 
 
@@ -32,16 +32,16 @@ Route::middleware('auth')->prefix('santri')->controller(SantriController::class)
     Route::get('profil/{santri}', 'profil')->name('.profil');
 
     Route::get('bidang', 'bidang')->name('.bidang');
-    Route::patch('bidang', 'bidangUpdate')->name('.bidangUpdate');
+    Route::patch('bidang', 'bidangUpdate')->name('.bidangUpdate')->middleware(['role:admin|kadiv']);
 
     Route::get('catatan/{santri}', 'catatan')->name('.catatan');
-    Route::post('catatan', 'catatanStore')->name('.catatanStore');
-    Route::patch('catatan', 'catatanUpdate')->name('.catatanUpdate');
+    Route::post('catatan', 'catatanStore')->name('.catatanStore')->middleware(['role:admin|kadiv']);
+    Route::patch('catatan', 'catatanUpdate')->name('.catatanUpdate')->middleware(['role:admin|kadiv']);
 });
 
 
 // PLP Tahfidz
-Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-tahfidz')->controller(PlpTahfidzController::class)->name('plp-tahfidz')->group(function () {
+Route::middleware(['auth'])->prefix('plp-tahfidz')->controller(PlpTahfidzController::class)->name('plp-tahfidz')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -49,7 +49,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-tahfidz')->controller
 });
 
 // PLP IT
-Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-it')->controller(PlpItController::class)->name('plp-it')->group(function () {
+Route::middleware(['auth'])->prefix('plp-it')->controller(PlpItController::class)->name('plp-it')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -57,7 +57,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-it')->controller(PlpI
 });
 
 // PLP Bahasa
-Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-bahasa')->controller(PlpBahasaController::class)->name('plp-bahasa')->group(function () {
+Route::middleware(['auth'])->prefix('plp-bahasa')->controller(PlpBahasaController::class)->name('plp-bahasa')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -65,7 +65,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-bahasa')->controller(
 });
 
 // PLP Karakter
-Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-karakter')->controller(PlpKarakterController::class)->name('plp-karakter')->group(function () {
+Route::middleware(['auth'])->prefix('plp-karakter')->controller(PlpKarakterController::class)->name('plp-karakter')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -75,7 +75,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('plp-karakter')->controlle
 
 
 // Kelas Payung
-Route::middleware(['auth', 'level:admin,tu'])->prefix('kelas-payung')->controller(KelasPayungController::class)->name('kelas-payung')->group(function () {
+Route::middleware(['auth'])->prefix('kelas-payung')->controller(KelasPayungController::class)->name('kelas-payung')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -83,7 +83,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('kelas-payung')->controlle
 });
 
 // Kelas Pondok
-Route::middleware(['auth', 'level:admin,tu'])->prefix('kelas-pondok')->controller(KelasPondokController::class)->name('kelas-pondok')->group(function () {
+Route::middleware(['auth'])->prefix('kelas-pondok')->controller(KelasPondokController::class)->name('kelas-pondok')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
     Route::patch('update', 'update')->name('.update');
@@ -92,7 +92,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('kelas-pondok')->controlle
 
 
 // Siswa
-Route::middleware(['auth', 'level:admin,tu'])->prefix('siswa')->controller(SiswaController::class)->name('siswa')->group(function () {
+Route::middleware(['auth'])->prefix('siswa')->controller(SiswaController::class)->name('siswa')->group(function () {
     Route::get('/', 'index');
     Route::get('profil/{siswa}', 'profil')->name('.profil');
     Route::get('edit/{siswa}', 'edit')->name('.edit');
@@ -102,7 +102,7 @@ Route::middleware(['auth', 'level:admin,tu'])->prefix('siswa')->controller(Siswa
 
 
 // Semester
-Route::middleware(['auth', 'level:admin'])->prefix('semester')->controller(SemesterController::class)->name('semester')->group(function () {
+Route::middleware(['auth'])->prefix('semester')->controller(SemesterController::class)->name('semester')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::post('store', 'store')->name('.store');
 });
