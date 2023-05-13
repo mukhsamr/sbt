@@ -3,7 +3,7 @@ import Layout from '@/Layouts/Layout.vue';
 import { Table, Th, Td, Input, Select, BtnIcon, Button } from '@/Components';
 import { UserIcon, FunnelIcon } from '@heroicons/vue/24/outline';
 import { reactive, watch } from 'vue';
-import { chunk, debounce } from "lodash";
+import { debounce } from "lodash";
 import { router } from '@inertiajs/vue3';
 
 
@@ -35,10 +35,6 @@ watch(formCari, debounce((item) => {
 }, 300))
 
 
-function filter() {
-
-}
-
 </script>
 
 <template>
@@ -47,7 +43,7 @@ function filter() {
         <div class="flex justify-between my-4">
             <Input placeholder="cari nama" v-model="formCari.nama" />
             <div class="flex space-x-2 ml-4">
-                <Button color="warning" data-modal-target="staticModal" data-modal-toggle="staticModal">
+                <Button color="warning" data-modal-target="defaultModal" data-modal-toggle="defaultModal">
                     <FunnelIcon class="h-4 w-4 inline mr-2" />
                     <span class="align-middle">Filter</span>
                 </Button>
@@ -82,8 +78,7 @@ function filter() {
 
 
         <!-- Modal -->
-        <div id="staticModal" data-modal-backdrop="static" data-modal-placement="top-center" tabindex="-1"
-            aria-hidden="true"
+        <div id="defaultModal" data-modal-placement="top-center" tabindex="-1" aria-hidden="true"
             class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative w-full max-w-2xl max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -95,7 +90,7 @@ function filter() {
                         </h3>
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                            data-modal-hide="staticModal">
+                            data-modal-hide="defaultModal">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
@@ -107,18 +102,10 @@ function filter() {
 
                     <!-- Body -->
                     <div class="p-6 space-y-6">
-                        <form @submit.prevent="filter()">
-                            <Select label="Kelas" required v-model="formCari.kelas_payung">
-                                <option value="0">-</option>
-                                <option :value="item.id" v-for="item in kelas_payung">{{ item.kelas }}</option>
-                            </Select>
-                        </form>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div
-                        class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                        <Button color="warning" data-modal-hide="staticModal">Filter</Button>
+                        <Select label="Kelas" required v-model="formCari.kelas_payung">
+                            <option value="0">-</option>
+                            <option :value="item.id" v-for="item in kelas_payung">{{ item.kelas }}</option>
+                        </Select>
                     </div>
                 </div>
             </div>

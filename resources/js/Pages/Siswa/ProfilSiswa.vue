@@ -32,15 +32,18 @@ function foto() {
             <div>
                 <h2 class="mb-4 text-2xl text-slate-600"># Data Diri</h2>
                 <div class="space-y-4">
+                    <List kolom="Nama" :value="siswa.nama" />
+                    <List kolom="Panggilan" :value="siswa.panggilan" />
                     <List kolom="NIK" :value="siswa.nik" />
                     <List kolom="Gender">
                         <div v-if="siswa.gender == 'l'">Laki-laki</div>
                         <div v-else>Perempuan</div>
                     </List>
                     <List kolom="TTL">
-                        <div>{{ siswa.tempat }}</div>
-                        <div>{{ siswa.lahir }}</div>
+                        <span>{{ siswa.tempat + ', ' + siswa.lahir }}</span>
+                        <span class=""> - ({{ siswa.usia }} Tahun)</span>
                     </List>
+                    <List kolom="Anak Ke" :value="siswa.anak_ke" />
                     <List kolom="Asal Sekolah" :value="siswa.asal_sekolah" />
                     <List kolom="Tinggi Badan" :value="siswa.tinggi_badan" />
                     <List kolom="Berat Badan" :value="siswa.berat_badan" />

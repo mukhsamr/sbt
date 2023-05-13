@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, Collapse } from "@/Components";
-import { UserIcon, HomeIcon, InboxStackIcon, Squares2X2Icon, CalendarIcon } from "@heroicons/vue/24/outline";
+import { UserIcon, UsersIcon, HomeIcon, InboxStackIcon, Squares2X2Icon, CalendarIcon } from "@heroicons/vue/24/outline";
 import { Link as A } from "@inertiajs/vue3";
 import { useSessionStore } from "@/Stores/Session";
 
@@ -78,6 +78,13 @@ defineExpose({
             <template v-if="userRole(['admin', 'tu'])">
                 <Link :icon="UserIcon" :isActive="$page.url.startsWith('/siswa')" href="/siswa">
                 Siswa
+                </Link>
+            </template>
+
+            <!-- Parents -->
+            <template v-if="userRole(['admin', 'tu'])">
+                <Link :icon="UsersIcon" :isActive="$page.url.startsWith('/parents')" href="/parents">
+                Parents
                 </Link>
             </template>
 

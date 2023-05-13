@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('anak_ke')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

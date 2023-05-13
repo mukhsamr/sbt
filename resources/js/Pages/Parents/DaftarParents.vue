@@ -2,7 +2,7 @@
 import Layout from "@/Layouts/Layout.vue";
 import { Table, Th, Td, BtnIcon, Input, Select, Button } from "@/Components";
 import { useToast, useConfirm } from "@/Composables";
-import { InboxIcon, TrashIcon, PencilSquareIcon, FunnelIcon, PlusIcon, NoSymbolIcon } from "@heroicons/vue/24/outline";
+import { InboxIcon, TrashIcon, PencilSquareIcon, FunnelIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { router } from "@inertiajs/vue3";
 import { reactive, watch } from "vue";
 import { debounce } from "lodash";
@@ -20,26 +20,15 @@ const props = defineProps({
 
 
 function toProfil(item) {
-    router.get(route('siswa.profil', item.id))
-}
-
-
-async function disable(id) {
-    const cond = await useConfirm('Nonaktifkan Siswa?')
-
-    if (cond) {
-        router.delete(route('siswa.remove', id), {
-            onSuccess: () => useToast()
-        })
-    }
+    router.get(route('parents.profil', item.id))
 }
 
 
 async function hapus(id) {
-    const cond = await useConfirm('Hapus siswa')
+    const cond = await useConfirm('Hapus parents')
 
     if (cond) {
-        router.delete(route('siswa.destroy', id), {
+        router.delete(route('parents.destroy', id), {
             onSuccess: () => useToast()
         })
     }
@@ -48,13 +37,12 @@ async function hapus(id) {
 
 const formCari = reactive({
     nama: props.cari.nama,
-    gender: props.cari.gender,
     limit: props.cari.limit,
 })
 
 
 watch(formCari, debounce((item) => {
-    router.get(route('siswa.index'), item, {
+    router.get(route('parents.index'), item, {
         preserveState: true
     })
 }, 300))
@@ -62,7 +50,7 @@ watch(formCari, debounce((item) => {
 </script>
 
 <template>
-    <Layout judul="Daftar Siswa">
+    <Layout judul="Daftar Parents">
 
         <div class="flex justify-between my-4">
             <Input placeholder="cari nama" v-model="formCari.nama" />
@@ -71,9 +59,9 @@ watch(formCari, debounce((item) => {
                 <span class="align-middle">Filter</span>
             </Button>
 
-            <Button class="ml-12" color="success" @click="$inertia.get(route('siswa.create'))">
+            <Button class="ml-12" color="success" @click="$inertia.get(route('parents.create'))">
                 <PlusIcon class="h-4 w-4 inline mr-2" />
-                <span class="align-middle">Tambah Siswa</span>
+                <span class="align-middle">Tambah parents</span>
             </Button>
         </div>
 
@@ -86,7 +74,7 @@ watch(formCari, debounce((item) => {
                     <!-- Modal header -->
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl text-gray-900 dark:text-white">
-                            Filter Siswa
+                            Filter Parents
                         </h3>
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -102,10 +90,6 @@ watch(formCari, debounce((item) => {
 
                     <!-- Body -->
                     <div class="p-6 space-y-6">
-                        <Select label="Jenis Kelamin" required v-model="formCari.gender">
-                            <option value="l">Laki-laki</option>
-                            <option value="p">Perempuan</option>
-                        </Select>
                         <Select label="Limit" required v-model="formCari.limit">
                             <option value="10">10</option>
                             <option value="25">25</option>
@@ -119,28 +103,23 @@ watch(formCari, debounce((item) => {
 
         <Table :items="daftar">
             <template #head>
-                <Th>Foto</Th>
-                <Th>Nama</Th>
-                <Th>NIK</Th>
-                <Th>Usia</Th>
+                <Th>Ayah</Th>
+                <Th>Ibu</Th>
+                <Th>Jumlah Siswa</Th>
                 <Th>Profil</Th>
                 <Th>Aksi</Th>
             </template>
             <template #body="{ item }">
-                <Td>
-                    <img :src="item.foto ? `/storage/siswa/${item.foto}` : `/storage/user.jpg`"
-                        class="rounded-full w-16 h-16 object-top object-cover" alt="Foto Profil" />
-                </Td>
-                <Td>{{ item.nama }}</Td>
-                <Td>{{ item.nik }}</Td>
-                <Td>{{ item.usia }}</Td>
+                <Td>{{ item.nama_ayah }}</Td>
+                <Td>{{ item.nama_ibu }}</Td>
+                <Td>{{ item.jumlah_siswa }}</Td>
                 <Td>
                     <BtnIcon :icon="InboxIcon" class="text-amber-600" @click="toProfil(item)">Biodata</BtnIcon>
                 </Td>
                 <Td>
                     <div class="flex space-x-4">
                         <BtnIcon :icon="PencilSquareIcon" class="text-blue-600"
-                            @click="router.get(route('siswa.edit', item.id))">Edit</BtnIcon>
+                            @click="router.get(route('parents.edit', item.id))">Edit</BtnIcon>
                         <!-- <BtnIcon :icon="NoSymbolIcon" class="text-slate-600" @click="disable(item.id)">Disable</BtnIcon> -->
                         <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item.id)">Hapus</BtnIcon>
                     </div>

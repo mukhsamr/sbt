@@ -12,8 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nik')->unique();
             $table->string('nama');
-            $table->string('jabatan');
-            $table->date('tanggal_lahir');
+            $table->string('jabatan')->nullable();
             $table->timestamps();
         });
     }

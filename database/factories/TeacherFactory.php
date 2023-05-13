@@ -12,7 +12,6 @@ class TeacherFactory extends Factory
             'nik' => fake()->nik(),
             'nama' => fake()->name(),
             'jabatan' => fake()->jobTitle(),
-            'tanggal_lahir' => fake()->date()
         ];
     }
 }

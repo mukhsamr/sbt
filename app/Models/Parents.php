@@ -10,6 +10,7 @@ class Parents extends Model
     use HasFactory;
 
     protected $hidden = ['created_at', 'updated_at'];
+    protected $guarded = ['id'];
 
     public function students()
     {

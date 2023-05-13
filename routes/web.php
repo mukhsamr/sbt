@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KelasPayungController;
 use App\Http\Controllers\KelasPondokController;
+use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\PlpBahasaController;
 use App\Http\Controllers\PlpItController;
 use App\Http\Controllers\PlpKarakterController;
@@ -93,11 +94,28 @@ Route::middleware(['auth'])->prefix('kelas-pondok')->controller(KelasPondokContr
 
 // Siswa
 Route::middleware(['auth'])->prefix('siswa')->controller(SiswaController::class)->name('siswa')->group(function () {
-    Route::get('/', 'index');
+    Route::get('/', 'index')->name('.index');
     Route::get('profil/{siswa}', 'profil')->name('.profil');
+    Route::get('create', 'create')->name('.create');
     Route::get('edit/{siswa}', 'edit')->name('.edit');
+
+    Route::post('/', 'store')->name('.store');
     Route::patch('{siswa}', 'update')->name('.update');
+    Route::delete('remove/{siswa}', 'remove')->name('.remove');
     Route::delete('{siswa}', 'destroy')->name('.destroy');
+});
+
+
+// Parents
+Route::middleware(['auth'])->prefix('parents')->controller(ParentsController::class)->name('parents')->group(function () {
+    Route::get('/', 'index')->name('.index');
+    Route::get('profil/{parents}', 'profil')->name('.profil');
+    Route::get('create', 'create')->name('.create');
+    Route::get('edit/{parents}', 'edit')->name('.edit');
+
+    Route::post('/', 'store')->name('.store');
+    Route::patch('{parents}', 'update')->name('.update');
+    Route::delete('{parents}', 'destroy')->name('.destroy');
 });
 
 
