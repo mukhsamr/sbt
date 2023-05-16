@@ -40,7 +40,10 @@ const props = defineProps({
                     <li class="py-3" v-for="item in students">
                         <div class="flex items-center space-x-4">
                             <div class="flex-shrink-0">
-                                <img class="w-8 h-8 rounded-full" :src="`storage/siswa/${item.foto}`" :alt="item.nama">
+                                <div class="w-12">
+                                    <img :src="item.foto ? `/storage/siswa/${item.foto}` : `/storage/user.jpg`"
+                                        class="rounded-full w-full h-12 object-top object-cover" alt="Foto Profil" />
+                                </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-gray-900">

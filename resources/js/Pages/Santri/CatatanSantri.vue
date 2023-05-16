@@ -4,6 +4,11 @@ import { PencilSquareIcon, PlusIcon } from '@heroicons/vue/24/outline';
 import { useToast } from '@/Composables';
 import { useForm } from "@inertiajs/vue3";
 import { Textarea, Input, Select, Button } from '@/Components';
+import { useSessionStore } from "@/Stores/Session";
+import { isEmpty } from "lodash";
+
+
+const userRole = (role) => useSessionStore().checkRole(role)
 
 const props = defineProps({
     tipe: String,
@@ -29,6 +34,7 @@ const formEdit = useForm({
 })
 
 const formTambah = useForm({
+    tipe: props.tipe,
     judul: null,
     santri_id: props.santri.id,
     teacher_id: null,
@@ -55,21 +61,17 @@ function store() {
     })
 }
 
-function back() {
-    window.history.back()
-}
-
 </script>
 
 <template>
 
     <Layout :judul="'Catatan ' + (tipe == 'p' ? 'Positif' : 'Negatif')">
         <div class="space-y-4 mt-4">
-            <Button color="success" data-modal-target="modalTambah" data-modal-toggle="modalTambah">
-                <div class="flex">
-                    <div class="align-middle">Tambah</div>
-                    <PlusIcon class="h-4 w-4 inline ml-2" />
-                </div>
+
+            <Button class="flex" color="success" data-modal-target="modalTambah" data-modal-toggle="modalTambah"
+                v-if="userRole(['admin', 'kadiv'])">
+                <PlusIcon class="h-4 w-4 md:inline mr-2 hidden" />
+                <div class="align-middle">Tambah</div>
             </Button>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -142,7 +144,7 @@ function back() {
 
 
         <!-- Modal Edit -->
-        <div id="modalEdit" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
+        <div v-if="!isEmpty(catatan)" id="modalEdit" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
             class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative w-full max-w-2xl max-h-full">
                 <form @submit.prevent="update()">

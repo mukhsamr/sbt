@@ -7,7 +7,8 @@ defineProps({
         default: () => []
     },
     bordered: Boolean,
-    center: Boolean
+    center: Boolean,
+    footer: String
 })
 
 </script>
@@ -31,5 +32,6 @@ defineProps({
                 </tr>
             </tbody>
         </table>
+        <span class="text-sm text-slate-600 px-4" v-if="footer">{{ footer }}</span>
     </div>
 </template>

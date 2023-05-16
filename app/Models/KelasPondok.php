@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class KelasPondok extends Model
 {
-    public $timstamps = false;
+    public $timestamps = false;
     protected $guarded = ['id'];
 
     public function santris()

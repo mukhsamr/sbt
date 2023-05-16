@@ -32,7 +32,11 @@ Route::middleware('auth')->prefix('santri')->controller(SantriController::class)
     Route::get('/', 'index')->name('.index');
     Route::get('profil/{santri}', 'profil')->name('.profil');
 
+    Route::get('assigne', 'assigne')->name('.assigne')->middleware(['role:admin|tu']);
+    Route::post('assigne', 'assigneStore')->name('.assigne-store')->middleware(['role:admin|tu']);
+
     Route::get('bidang', 'bidang')->name('.bidang');
+    Route::post('bidang', 'bidangStore')->name('.bidangStore')->middleware(['role:admin|kadiv']);
     Route::patch('bidang', 'bidangUpdate')->name('.bidangUpdate')->middleware(['role:admin|kadiv']);
 
     Route::get('catatan/{santri}', 'catatan')->name('.catatan');
@@ -44,33 +48,33 @@ Route::middleware('auth')->prefix('santri')->controller(SantriController::class)
 // PLP Tahfidz
 Route::middleware(['auth'])->prefix('plp-tahfidz')->controller(PlpTahfidzController::class)->name('plp-tahfidz')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{plp_tahfidz}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|kadiv']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|kadiv']);
+    Route::delete('destroy/{plp_tahfidz}', 'destroy')->name('.destroy')->middleware(['role:admin|kadiv']);
 });
 
 // PLP IT
 Route::middleware(['auth'])->prefix('plp-it')->controller(PlpItController::class)->name('plp-it')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{plp_it}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|kadiv']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|kadiv']);
+    Route::delete('destroy/{plp_it}', 'destroy')->name('.destroy')->middleware(['role:admin|kadiv']);
 });
 
 // PLP Bahasa
 Route::middleware(['auth'])->prefix('plp-bahasa')->controller(PlpBahasaController::class)->name('plp-bahasa')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{plp_bahasa}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|kadiv']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|kadiv']);
+    Route::delete('destroy/{plp_bahasa}', 'destroy')->name('.destroy')->middleware(['role:admin|kadiv']);
 });
 
 // PLP Karakter
 Route::middleware(['auth'])->prefix('plp-karakter')->controller(PlpKarakterController::class)->name('plp-karakter')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{plp_karakter}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|kadiv']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|kadiv']);
+    Route::delete('destroy/{plp_karakter}', 'destroy')->name('.destroy')->middleware(['role:admin|kadiv']);
 });
 
 
@@ -78,17 +82,17 @@ Route::middleware(['auth'])->prefix('plp-karakter')->controller(PlpKarakterContr
 // Kelas Payung
 Route::middleware(['auth'])->prefix('kelas-payung')->controller(KelasPayungController::class)->name('kelas-payung')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{kelasPayung}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|tu']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|tu']);
+    Route::delete('destroy/{kelasPayung}', 'destroy')->name('.destroy')->middleware(['role:admin|tu']);
 });
 
 // Kelas Pondok
 Route::middleware(['auth'])->prefix('kelas-pondok')->controller(KelasPondokController::class)->name('kelas-pondok')->group(function () {
     Route::get('/', 'index')->name('.index');
-    Route::post('store', 'store')->name('.store');
-    Route::patch('update', 'update')->name('.update');
-    Route::delete('destroy/{kelasPondok}', 'destroy')->name('.destroy');
+    Route::post('store', 'store')->name('.store')->middleware(['role:admin|tu']);
+    Route::patch('update', 'update')->name('.update')->middleware(['role:admin|tu']);
+    Route::delete('destroy/{kelasPondok}', 'destroy')->name('.destroy')->middleware(['role:admin|tu']);
 });
 
 
@@ -96,13 +100,13 @@ Route::middleware(['auth'])->prefix('kelas-pondok')->controller(KelasPondokContr
 Route::middleware(['auth'])->prefix('siswa')->controller(SiswaController::class)->name('siswa')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::get('profil/{siswa}', 'profil')->name('.profil');
-    Route::get('create', 'create')->name('.create');
-    Route::get('edit/{siswa}', 'edit')->name('.edit');
+    Route::get('create', 'create')->name('.create')->middleware(['role:admin|tu']);
+    Route::get('edit/{siswa}', 'edit')->name('.edit')->middleware(['role:admin|tu']);
 
-    Route::post('/', 'store')->name('.store');
-    Route::patch('{siswa}', 'update')->name('.update');
-    Route::delete('remove/{siswa}', 'remove')->name('.remove');
-    Route::delete('{siswa}', 'destroy')->name('.destroy');
+    Route::post('/', 'store')->name('.store')->middleware(['role:admin|tu']);
+    Route::patch('{siswa}', 'update')->name('.update')->middleware(['role:admin|tu']);
+    Route::delete('remove/{siswa}', 'remove')->name('.remove')->middleware(['role:admin|tu']);
+    Route::delete('{siswa}', 'destroy')->name('.destroy')->middleware(['role:admin|tu']);
 });
 
 
@@ -110,12 +114,12 @@ Route::middleware(['auth'])->prefix('siswa')->controller(SiswaController::class)
 Route::middleware(['auth'])->prefix('parents')->controller(ParentsController::class)->name('parents')->group(function () {
     Route::get('/', 'index')->name('.index');
     Route::get('profil/{parents}', 'profil')->name('.profil');
-    Route::get('create', 'create')->name('.create');
-    Route::get('edit/{parents}', 'edit')->name('.edit');
+    Route::get('create', 'create')->name('.create')->middleware(['role:admin|tu']);
+    Route::get('edit/{parents}', 'edit')->name('.edit')->middleware(['role:admin|tu']);
 
-    Route::post('/', 'store')->name('.store');
-    Route::patch('{parents}', 'update')->name('.update');
-    Route::delete('{parents}', 'destroy')->name('.destroy');
+    Route::post('/', 'store')->name('.store')->middleware(['role:admin|tu']);
+    Route::patch('{parents}', 'update')->name('.update')->middleware(['role:admin|tu']);
+    Route::delete('{parents}', 'destroy')->name('.destroy')->middleware(['role:admin|tu']);
 });
 
 

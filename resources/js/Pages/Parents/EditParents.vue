@@ -40,7 +40,7 @@ function update() {
 </script>
 
 <template>
-    <Layout judul="Tambah parents">
+    <Layout judul="Edit parents">
         <form class="mt-8" @submit.prevent="update()">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-4">

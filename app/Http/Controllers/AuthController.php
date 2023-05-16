@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, false)) {
+        if (Auth::attempt($credentials, true)) {
 
             session(['tipe' => $request->tipe]);
 

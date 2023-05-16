@@ -11,7 +11,7 @@ class Semester extends Model
 
     public static function active()
     {
-        return self::firstWhere('is_active', 1)?->value('id');
+        return self::firstWhere('is_active', 1)?->id;
     }
 
     public function santris()

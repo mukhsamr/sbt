@@ -19,11 +19,10 @@ return new class extends Migration
         Schema::create('santris', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Student::class)->constrained()->restrictOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(KelasPondok::class)->constrained()->restrictOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(KelasPayung::class)->constrained()->restrictOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(KelasPondok::class)->nullable()->constrained()->restrictOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(KelasPayung::class)->nullable()->constrained()->restrictOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Semester::class)->constrained()->restrictOnDelete()->cascadeOnUpdate();
 
-            $table->enum('level', ['l', 'm', 'h']);
             $table->timestamps();
         });
     }

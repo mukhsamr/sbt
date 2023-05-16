@@ -7,11 +7,11 @@ import { useSessionStore } from "@/Stores/Session";
 
 
 const isHide = ref(window.screen.width < 992)
-const user = useSessionStore().user
 
-function userRole(roles) {
-    return roles.includes(user.role)
-}
+const store = useSessionStore()
+const user = store.user
+
+const userRole = (role) => store.checkRole(role)
 
 function toggle() {
     isHide.value = !isHide.value
@@ -45,48 +45,39 @@ defineExpose({
             <Link :icon="HomeIcon" :isActive="$page.url.startsWith('/home')" href="/">Beranda</Link>
             <Link :icon="UserIcon" :isActive="$page.url.startsWith('/santri')" href="/santri">Santri</Link>
 
+            <!-- Bidang -->
+            <Collapse :icon="InboxStackIcon" text="PLP" :isActive="$page.url.startsWith('/plp')">
+                <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-tahfidz">Tahfidz</A>
+                <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-it">IT</A>
+                <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-bahasa">Bahasa</A>
+                <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-karakter">Karakter</A>
+            </Collapse>
+
             <hr class="my-2">
 
-            <!-- Bidang -->
-            <template v-if="userRole(['admin', 'tu'])">
-                <Collapse :icon="InboxStackIcon" text="PLP" :isActive="$page.url.startsWith('/plp')">
-                    <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                        data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-tahfidz">Tahfidz</A>
-                    <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                        data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-it">IT</A>
-                    <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                        data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-bahasa">Bahasa</A>
-                    <A class="flex items-center text-xs py-4 pl-12 pr-6 h-6 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                        data-mdb-ripple="true" data-mdb-ripple-color="primary" href="/plp-karakter">Karakter</A>
-                </Collapse>
-            </template>
-
-
             <!-- Kelas -->
-            <template v-if="userRole(['admin', 'tu'])">
-                <Link :icon="Squares2X2Icon" :isActive="$page.url.startsWith('/kelas-payung')" href="/kelas-payung">
-                Kelas Payung
-                </Link>
-                <Link :icon="Squares2X2Icon" :isActive="$page.url.startsWith('/kelas-pondok')" href="/kelas-pondok">
-                Kelas Pondok
-                </Link>
-            </template>
+            <Link :icon="Squares2X2Icon" :isActive="$page.url.startsWith('/kelas-payung')" href="/kelas-payung">
+            Kelas Payung
+            </Link>
+            <Link :icon="Squares2X2Icon" :isActive="$page.url.startsWith('/kelas-pondok')" href="/kelas-pondok">
+            Kelas Pondok
+            </Link>
 
             <hr class="my-2">
 
             <!-- Siswa -->
-            <template v-if="userRole(['admin', 'tu'])">
-                <Link :icon="UserIcon" :isActive="$page.url.startsWith('/siswa')" href="/siswa">
-                Siswa
-                </Link>
-            </template>
+            <Link :icon="UserIcon" :isActive="$page.url.startsWith('/siswa')" href="/siswa">
+            Siswa
+            </Link>
 
             <!-- Parents -->
-            <template v-if="userRole(['admin', 'tu'])">
-                <Link :icon="UsersIcon" :isActive="$page.url.startsWith('/parents')" href="/parents">
-                Parents
-                </Link>
-            </template>
+            <Link :icon="UsersIcon" :isActive="$page.url.startsWith('/parents')" href="/parents">
+            Parents
+            </Link>
 
             <!-- Semester -->
             <template v-if="userRole(['admin'])">

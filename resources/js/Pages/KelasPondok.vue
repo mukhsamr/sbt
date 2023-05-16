@@ -2,9 +2,12 @@
 import Layout from '@/Layouts/Layout.vue';
 import { Table, Th, Td, Button, BtnIcon, Input } from "@/Components";
 import { useToast, useConfirm } from "@/Composables";
-import { TrashIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
-import { useForm } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3';
+import { TrashIcon, PencilSquareIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import { router, useForm } from '@inertiajs/vue3';
+import { useSessionStore } from "@/Stores/Session";
+
+
+const userRole = () => useSessionStore().checkRole(['admin', 'tu'])
 
 defineProps({
     daftar: {
@@ -56,7 +59,7 @@ async function hapus(item) {
     const cond = await useConfirm('Hapus kelas pondok')
 
     if (cond) {
-        Inertia.delete(route('kelas-pondok.destroy', item.id), {
+        router.delete(route('kelas-pondok.destroy', item.id), {
             onSuccess: () => useToast()
         })
     }
@@ -66,80 +69,114 @@ async function hapus(item) {
 
 <template>
     <Layout judul="Kelas Pondok">
-        <Button color="success" class="mb-2 float-right" data-bs-toggle="modal"
-            data-bs-target="#modalTambah">Tambah</Button>
+        <Button v-if="userRole()" color="success" class="mb-2" data-modal-target="modalTambah"
+            data-modal-toggle="modalTambah">
+            <PlusIcon class="h-4 w-4 md:inline mr-2 hidden" />
+            <span class="align-middle whitespace-nowrap">Tambah</span>
+        </Button>
         <Table :items="daftar">
             <template #head>
                 <Th>Kelas</Th>
                 <Th>Siswa</Th>
-                <Th>Aksi</Th>
+                <Th v-if="userRole()">Aksi</Th>
             </template>
             <template #body="{ item }">
                 <Td>{{ item.kelas }}</Td>
                 <Td>{{ item.santris_count }}</Td>
-                <Td class="flex space-x-4">
-                    <BtnIcon :icon="PencilSquareIcon" class="text-blue-600" data-bs-toggle="modal"
-                        data-bs-target="#modalEdit" @click="editModal(item)">Edit</BtnIcon>
-                    <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item)">Hapus</BtnIcon>
+                <Td v-if="userRole()" class="flex space-x-4">
+                    <BtnIcon :icon="PencilSquareIcon" class="text-blue-600" data-modal-target="modalEdit"
+                        data-modal-toggle="modalEdit" @click="editModal(item)">Edit</BtnIcon>
+                    <div>
+                        <BtnIcon :icon="TrashIcon" disabled v-if="item.santris_count">Hapus</BtnIcon>
+                        <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item)" v-else>Hapus</BtnIcon>
+                    </div>
                 </Td>
             </template>
         </Table>
 
 
         <!-- Modal Tambah -->
-        <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-            id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="modalTambahLabel" aria-hidden="true">
-            <div class="modal-dialog relative w-auto pointer-events-none">
-                <form @submit.prevent="store()"
-                    class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                    <div
-                        class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                        <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">
-                            Tambah
-                        </h5>
-                        <button type="button"
-                            class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body relative p-4">
-                        <Input label="Kelas" v-model="formTambah.kelas" required />
-                    </div>
-                    <div
-                        class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end space-x-2 p-4 border-t border-gray-200 rounded-b-md">
-                        <Button type="button" color="secondary" data-bs-dismiss="modal">Tutup</Button>
-                        <Button type="submit" data-bs-dismiss="modal">Simpan</Button>
-                    </div>
-                </form>
+        <div id="modalTambah" tabindex="-1" aria-hidden="true" data-modal-placement="top-center"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative w-full max-w-2xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <form @submit.prevent="store">
+                        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Tambah Kelas
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="modalTambah">
+                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <Input label="Kelas" type="number" v-model="formTambah.kelas" required />
+                        </div>
+
+                        <div
+                            class="justify-between flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+                            <Button data-modal-hide="modalTambah" type="button" color="secondary"
+                                data-bs-dismiss="modal">Tutup</Button>
+                            <Button data-modal-hide="modalTambah" type="submit" data-bs-dismiss="modal">Simpan</Button>
+
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
 
+
         <!-- Modal Edit -->
-        <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-            id="modalEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="modalEditLabel" aria-hidden="true">
-            <div class="modal-dialog relative w-auto pointer-events-none">
-                <form @submit.prevent="update()"
-                    class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                    <div
-                        class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                        <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">
-                            Edit
-                        </h5>
-                        <button type="button"
-                            class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body relative p-4">
-                        <Input label="Kelas" v-model="formEdit.kelas" required />
-                    </div>
-                    <div
-                        class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end space-x-2 p-4 border-t border-gray-200 rounded-b-md">
-                        <Button type="button" color="secondary" data-bs-dismiss="modal">Tutup</Button>
-                        <Button type="submit" data-bs-dismiss="modal" color="warning">Update</Button>
-                    </div>
-                </form>
+        <div id="modalEdit" tabindex="-1" aria-hidden="true" data-modal-placement="top-center"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative w-full max-w-2xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <form @submit.prevent="update">
+                        <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Tambah Kelas
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="modalEdit">
+                                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <Input label="Kelas" type="number" v-model="formEdit.kelas" required />
+                        </div>
+
+                        <div
+                            class="justify-between flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+                            <Button data-modal-hide="modalEdit" type="button" color="secondary"
+                                data-bs-dismiss="modal">Tutup</Button>
+                            <Button data-modal-hide="modalEdit" type="submit" data-bs-dismiss="modal">Simpan</Button>
+
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
+
     </Layout>
 </template>

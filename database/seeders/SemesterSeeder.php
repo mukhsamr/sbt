@@ -18,12 +18,17 @@ class SemesterSeeder extends Seeder
             [
                 'tahun' => '2022-2023',
                 'semester' => 2,
+                'is_active' => 1,
+            ],
+            [
+                'tahun' => '2023-2024',
+                'semester' => 1,
                 'is_active' => 0,
             ],
             [
                 'tahun' => '2023-2024',
                 'semester' => 2,
-                'is_active' => 1,
+                'is_active' => 0,
             ],
         ];
 

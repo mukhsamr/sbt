@@ -12,9 +12,9 @@ return new class extends Migration
     {
         Schema::create('bidang_karakters', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Santri::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Santri::class)->unique()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(PlpKarakter::class)->nullable()->constrained()->restrictOnDelete()->cascadeOnUpdate();
-            $table->enum('kategori', ['l', 'm', 'h']);
+            $table->enum('kategori', ['l', 'm', 'h'])->nullable();
         });
     }
 

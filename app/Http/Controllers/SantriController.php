@@ -8,14 +8,17 @@ use App\Models\BidangKarakter;
 use App\Models\BidangTahfidz;
 use App\Models\Catatan;
 use App\Models\KelasPayung;
+use App\Models\KelasPondok;
 use App\Models\PlpBahasa;
 use App\Models\PlpIt;
 use App\Models\PlpKarakter;
 use App\Models\PlpTahfidz;
 use App\Models\Santri;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Traits\HasTryCatch;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,26 +28,30 @@ class SantriController extends Controller
 
     public function index(Request $request)
     {
-        $kelas_payung = $request->kelas_payung ?? KelasPayung::first()->value('id');
+        $request->limit ??= 10;
 
         return Inertia::render('Santri/DaftarSantri', [
             'daftar' => Santri::isActive()
                 ->with('student:id,nama,tanggal_lahir,foto')
                 ->select('id', 'student_id')
-                ->when(
-                    $kelas_payung,
-                    fn ($query) => $query->where('kelas_payung_id', $kelas_payung)
-                )
-                ->whereRelation('student', 'nama', 'like', "%$request->nama%")
+
+                ->when($request->limit, fn ($query) => $query->limit($request->limit))
+                ->when($request->nama, fn ($query) => $query->whereRelation('student', 'nama', 'like', "%$request->nama%"))
+                ->when($request->gender, fn ($query) => $query->whereRelation('student', 'gender',  $request->gender))
+                ->when($request->kelas_payung, fn ($query) => $query->where('kelas_payung_id', $request->kelas_payung))
+
                 ->withKelasPayung()
                 ->withKelasPondok()
+
                 ->get()
-                ->each(fn ($item) => $item->student->append('usia')),
+                ->sortBy('student.nama')
+                ->each(fn ($item) => $item->student->append('usia'))
+                ->values(),
 
             'kelas_payung' => KelasPayung::orderBy('kelas')->get(),
             'cari' => [
                 'nama' => $request->nama,
-                'kelas_payung' => $kelas_payung
+                'kelas_payung' => $request->kelas_payung
             ]
         ]);
     }
@@ -58,6 +65,12 @@ class SantriController extends Controller
 
             // Profil
             'santri' => $santri,
+
+            // List PLP
+            'plpTahfidz' => PlpTahfidz::all(),
+            'plpIt' => PlpIt::all(),
+            'plpBahasa' => PlpBahasa::all(),
+            'plpKarakter' => PlpKarakter::all(),
 
             // Bidang
             'tahfidz' => BidangTahfidz::withPlp()
@@ -77,14 +90,32 @@ class SantriController extends Controller
         ]);
     }
 
+    public function assigne(Request $request)
+    {
+        return Inertia::render('Santri/AssigneSantri', [
+            'siswa' => fn () => Student::select('id', 'foto', 'nama', 'gender')
+                ->whereDoesntHave('santris', function (Builder $query) {
+                    $query->isActive();
+                })
+                ->orderBy('nama')
+
+                ->when($request->nama, fn ($query) => $query->where('nama', 'like', "%$request->nama%"))
+                ->when($request->gender, fn ($query) => $query->where('gender', $request->gender))
+
+                ->get(),
+
+            'kelas_pondok' => KelasPondok::all(),
+            'kelas_payung' => KelasPayung::all(),
+        ]);
+    }
+
     public function bidang(Request $request)
     {
         $student = Student::find($request->student_id);
 
         if ($request->bidang == 'tahfidz') {
 
-            $plp = PlpTahfidz::all();
-            $bidang = BidangTahfidz::withPlp()->find($request->santri_id);
+            $bidang = BidangTahfidz::withPlp()->firstWhere('santri_id', $request->santri_id);
             $daftar = $student
                 ->bidangTahfidzs()
                 ->withPlp()
@@ -100,8 +131,7 @@ class SantriController extends Controller
 
         if ($request->bidang == 'it') {
 
-            $plp = PlpIt::all();
-            $bidang = BidangIt::withPlp()->find($request->santri_id);
+            $bidang = BidangIt::withPlp()->firstWhere('santri_id', $request->santri_id);
             $daftar = $student
                 ->bidangIts()
                 ->withPlp()
@@ -117,8 +147,7 @@ class SantriController extends Controller
 
         if ($request->bidang == 'bahasa') {
 
-            $plp = PlpBahasa::all();
-            $bidang = BidangBahasa::withPlp()->find($request->santri_id);
+            $bidang = BidangBahasa::withPlp()->firstWhere('santri_id', $request->santri_id);
             $daftar = $student
                 ->bidangBahasas()
                 ->withPlp()
@@ -134,8 +163,7 @@ class SantriController extends Controller
 
         if ($request->bidang == 'karakter') {
 
-            $plp = PlpKarakter::all();
-            $bidang = BidangKarakter::withPlp()->find($request->santri_id);
+            $bidang = BidangKarakter::withPlp()->firstWhere('santri_id', $request->santri_id);
             $daftar = $student
                 ->bidangKarakters()
                 ->withPlp()
@@ -153,7 +181,6 @@ class SantriController extends Controller
             'daftar' => $daftar,
             'bidang' => $bidang,
             'tipe' => $request->bidang,
-            'list_plp' => $plp
         ]);
     }
 
@@ -172,28 +199,29 @@ class SantriController extends Controller
 
     // 
 
-    public function bidangUpdate(Request $request)
+    public function assigneStore(Request $request)
     {
-        $santri = Santri::find($request->santri_id);
-
-        if ($request->bidang == 'tahfidz') {
-            $santri = $santri->bidangTahfidz();
-        }
-
-        if ($request->bidang == 'it') {
-            $santri = $santri->bidangIt();
-        }
-
-        if ($request->bidang == 'bahasa') {
-            $santri = $santri->bidangBahasa();
-        }
-
-        if ($request->bidang == 'karakter') {
-            $santri = $santri->bidangKarakter();
-        }
+        $data = $request->input();
+        $data['semester_id'] = Semester::active();
 
         $alert = $this::execute(
-            try: fn () => $santri->update($request->except(['bidang', 'santri_id'])),
+            try: fn () => Santri::create($data),
+            message: "assigne siswa"
+        );
+
+        return back()->with('alert', $alert);
+    }
+
+    public function bidangStore(Request $request)
+    {
+        $alert = $this::execute(
+            try: function () use ($request) {
+
+                $this::createBidangTahfidz($request);
+                $this::createBidangIt($request);
+                $this::createBidangBahasa($request);
+                $this::createBidangKarakter($request);
+            },
             message: 'update plp'
         );
 
@@ -218,5 +246,51 @@ class SantriController extends Controller
         );
 
         return back()->with('alert', $alert);
+    }
+
+    // ====
+
+    private static function createBidangTahfidz($request)
+    {
+        BidangTahfidz::updateOrCreate([
+            'santri_id' => $request->santri_id,
+        ], [
+            'santri_id' => $request->santri_id,
+            'plp_tahfidz_id' => $request->tahfidz['plp_id'] ?: null,
+            'kategori' => $request->tahfidz['kategori'] ?: null
+        ]);
+    }
+
+    private static function createBidangIt($request)
+    {
+        BidangIt::updateOrCreate([
+            'santri_id' => $request->santri_id,
+        ], [
+            'santri_id' => $request->santri_id,
+            'plp_it_id' => $request->it['plp_id'] ?: null,
+            'kategori' => $request->it['kategori'] ?: null
+        ]);
+    }
+
+    private static function createBidangBahasa($request)
+    {
+        BidangBahasa::updateOrCreate([
+            'santri_id' => $request->santri_id,
+        ], [
+            'santri_id' => $request->santri_id,
+            'plp_bahasa_id' => $request->bahasa['plp_id'] ?: null,
+            'kategori' => $request->bahasa['kategori'] ?: null
+        ]);
+    }
+
+    private static function createBidangKarakter($request)
+    {
+        BidangKarakter::updateOrCreate([
+            'santri_id' => $request->santri_id,
+        ], [
+            'santri_id' => $request->santri_id,
+            'plp_karakter_id' => $request->karakter['plp_id'] ?: null,
+            'kategori' => $request->karakter['kategori'] ?: null
+        ]);
     }
 }

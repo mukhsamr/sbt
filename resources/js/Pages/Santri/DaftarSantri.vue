@@ -1,11 +1,13 @@
 <script setup>
 import Layout from '@/Layouts/Layout.vue';
 import { Table, Th, Td, Input, Select, BtnIcon, Button } from '@/Components';
-import { UserIcon, FunnelIcon } from '@heroicons/vue/24/outline';
+import { UserIcon, FunnelIcon, ArrowsRightLeftIcon } from '@heroicons/vue/24/outline';
 import { reactive, watch } from 'vue';
 import { debounce } from "lodash";
 import { router } from '@inertiajs/vue3';
+import { useSessionStore } from "@/Stores/Session";
 
+const userRole = (role) => useSessionStore().checkRole(role)
 
 const props = defineProps({
     daftar: {
@@ -23,13 +25,16 @@ const props = defineProps({
 })
 
 const formCari = reactive({
+    limit: props.cari.limit ?? 10,
     nama: props.cari.nama,
-    kelas_payung: props.cari.kelas_payung,
+    gender: props.cari.gender ?? 0,
+    kelas_payung: props.cari.kelas_payung ?? 0,
 })
 
 
 watch(formCari, debounce((item) => {
     router.get(route('santri.index'), item, {
+        replace: true,
         preserveState: true
     })
 }, 300))
@@ -40,41 +45,24 @@ watch(formCari, debounce((item) => {
 <template>
     <Layout judul="Santri">
 
-        <div class="flex justify-between my-4">
-            <Input placeholder="cari nama" v-model="formCari.nama" />
-            <div class="flex space-x-2 ml-4">
-                <Button color="warning" data-modal-target="defaultModal" data-modal-toggle="defaultModal">
-                    <FunnelIcon class="h-4 w-4 inline mr-2" />
-                    <span class="align-middle">Filter</span>
+        <div class="grid grid-cols-1 my-4 gap-2">
+            <div v-if="userRole(['admin', 'tu'])">
+                <Button color="secondary" @click="$inertia.get(route('santri.assigne'))">
+                    <ArrowsRightLeftIcon class="h-4 w-4 hidden md:inline mr-2" />
+                    <span class="align-middle">Assigne</span>
                 </Button>
             </div>
+
+            <div class="flex space-x-2">
+                <Input placeholder="cari nama" v-model="formCari.nama" />
+                <div class="flex space-x-2 ml-4">
+                    <Button color="warning" data-modal-target="defaultModal" data-modal-toggle="defaultModal">
+                        <FunnelIcon class="h-4 w-4 hidden md:inline mr-2" />
+                        <span class="align-middle">Filter</span>
+                    </Button>
+                </div>
+            </div>
         </div>
-        <Table :items="daftar">
-            <template #head>
-                <Th>Foto</Th>
-                <Th>Santri</Th>
-                <Th>Kelas</Th>
-                <Th>Usia</Th>
-                <Th>Aksi</Th>
-            </template>
-            <template #body="{ item }">
-                <Td>
-                    <img :src="item.student.foto ? `/storage/siswa/${item.student.foto}` : `/storage/user.jpg`"
-                        class="rounded-full w-16 h-16 object-top object-cover" alt="Foto Profil" />
-                </Td>
-                <Td>{{ item.student.nama }}</Td>
-                <Td>{{ item.kelas_payung }}</Td>
-                <Td>{{ item.student.usia }}</Td>
-                <Td>
-                    <div class="flex space-x-4">
-                        <BtnIcon :icon="UserIcon" class="text-purple-600"
-                            @click="$inertia.get(route('santri.profil', item.id))">
-                            Profil
-                        </BtnIcon>
-                    </div>
-                </Td>
-            </template>
-        </Table>
 
 
         <!-- Modal -->
@@ -102,7 +90,18 @@ watch(formCari, debounce((item) => {
 
                     <!-- Body -->
                     <div class="p-6 space-y-6">
-                        <Select label="Kelas" required v-model="formCari.kelas_payung">
+                        <Select label="Limit" v-model="formCari.limit">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="0">Semua</option>
+                        </Select>
+                        <Select label="Jenis Kelamin" v-model="formCari.gender">
+                            <option value="0">-</option>
+                            <option value="l">Laki-laki</option>
+                            <option value="p">Perempuan</option>
+                        </Select>
+                        <Select label="Kelas" v-model="formCari.kelas_payung">
                             <option value="0">-</option>
                             <option :value="item.id" v-for="item in kelas_payung">{{ item.kelas }}</option>
                         </Select>
@@ -110,6 +109,35 @@ watch(formCari, debounce((item) => {
                 </div>
             </div>
         </div>
+
+        <Table :items="daftar">
+            <template #head>
+                <Th>Foto</Th>
+                <Th>Santri</Th>
+                <Th>Kelas</Th>
+                <Th>Usia</Th>
+                <Th>Aksi</Th>
+            </template>
+            <template #body="{ item }">
+                <Td>
+                    <div class="w-16">
+                        <img :src="item.student.foto ? `/storage/siswa/${item.student.foto}` : `/storage/user.jpg`"
+                            class="rounded-full w-full h-16 object-top object-cover" alt="Foto Profil" />
+                    </div>
+                </Td>
+                <Td>{{ item.student.nama }}</Td>
+                <Td>{{ item.kelas_payung ?? '-' }}</Td>
+                <Td>{{ item.student.usia }}</Td>
+                <Td>
+                    <div class="flex space-x-4">
+                        <BtnIcon :icon="UserIcon" class="text-purple-600"
+                            @click="$inertia.get(route('santri.profil', item.id))">
+                            Profil
+                        </BtnIcon>
+                    </div>
+                </Td>
+            </template>
+        </Table>
 
     </Layout>
 </template>
