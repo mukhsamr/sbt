@@ -87,7 +87,7 @@ async function hapus(item) {
                     <BtnIcon :icon="PencilSquareIcon" class="text-blue-600" data-modal-target="modalEdit"
                         data-modal-toggle="modalEdit" @click="editModal(item)">Edit</BtnIcon>
                     <div>
-                        <BtnIcon :icon="TrashIcon" disabled v-if="item.santris_count">Hapus</BtnIcon>
+                        <BtnIcon :icon="TrashIcon" disabled v-if="item.santris_count > 0">Hapus</BtnIcon>
                         <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item)" v-else>Hapus</BtnIcon>
                     </div>
                 </Td>

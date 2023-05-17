@@ -8,7 +8,7 @@ import { router } from '@inertiajs/vue3';
 import { useSessionStore } from "@/Stores/Session";
 import { useToast, useConfirm } from "@/Composables";
 
-const userRole = (role) => useSessionStore().checkRole(role)
+const userRole = () => useSessionStore().checkRole(['admin', 'tu'])
 
 const props = defineProps({
     daftar: {
@@ -58,7 +58,7 @@ async function hapus(id) {
     <Layout judul="Santri">
 
         <div class="grid grid-cols-1 my-4 gap-2">
-            <div v-if="userRole(['admin', 'tu'])">
+            <div v-if="userRole()">
                 <Button color="secondary" @click="$inertia.get(route('santri.assigne'))">
                     <ArrowsRightLeftIcon class="h-4 w-4 hidden md:inline mr-2" />
                     <span class="align-middle">Assigne</span>
@@ -129,7 +129,7 @@ async function hapus(id) {
                 <Th>Kelas</Th>
                 <Th>Usia</Th>
                 <Th>Profil</Th>
-                <Th>Hapus</Th>
+                <Th v-if="userRole()">Hapus</Th>
             </template>
             <template #body="{ item }">
                 <Td>
@@ -149,7 +149,7 @@ async function hapus(id) {
                         </BtnIcon>
                     </div>
                 </Td>
-                <Td>
+                <Td v-if="userRole()">
                     <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item.id)">Hapus</BtnIcon>
                 </Td>
             </template>
