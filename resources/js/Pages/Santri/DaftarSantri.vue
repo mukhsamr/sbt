@@ -1,11 +1,12 @@
 <script setup>
 import Layout from '@/Layouts/Layout.vue';
 import { Table, Th, Td, Input, Select, BtnIcon, Button } from '@/Components';
-import { UserIcon, FunnelIcon, ArrowsRightLeftIcon } from '@heroicons/vue/24/outline';
+import { UserIcon, FunnelIcon, ArrowsRightLeftIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { reactive, watch } from 'vue';
 import { debounce } from "lodash";
 import { router } from '@inertiajs/vue3';
 import { useSessionStore } from "@/Stores/Session";
+import { useToast, useConfirm } from "@/Composables";
 
 const userRole = (role) => useSessionStore().checkRole(role)
 
@@ -39,6 +40,17 @@ watch(formCari, debounce((item) => {
     })
 }, 300))
 
+
+async function hapus(id) {
+    const cond = await useConfirm('Hapus santri')
+
+    if (cond) {
+        router.delete(route('santri.assigne-remove', id), {
+            onSuccess: () => useToast()
+        })
+    }
+
+}
 
 </script>
 
@@ -116,7 +128,8 @@ watch(formCari, debounce((item) => {
                 <Th>Santri</Th>
                 <Th>Kelas</Th>
                 <Th>Usia</Th>
-                <Th>Aksi</Th>
+                <Th>Profil</Th>
+                <Th>Hapus</Th>
             </template>
             <template #body="{ item }">
                 <Td>
@@ -135,6 +148,9 @@ watch(formCari, debounce((item) => {
                             Profil
                         </BtnIcon>
                     </div>
+                </Td>
+                <Td>
+                    <BtnIcon :icon="TrashIcon" class="text-red-600" @click="hapus(item.id)">Hapus</BtnIcon>
                 </Td>
             </template>
         </Table>

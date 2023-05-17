@@ -34,6 +34,7 @@ Route::middleware('auth')->prefix('santri')->controller(SantriController::class)
 
     Route::get('assigne', 'assigne')->name('.assigne')->middleware(['role:admin|tu']);
     Route::post('assigne', 'assigneStore')->name('.assigne-store')->middleware(['role:admin|tu']);
+    Route::delete('assigne/{santri}', 'assigneRemove')->name('.assigne-remove')->middleware(['role:admin|tu']);
 
     Route::get('bidang', 'bidang')->name('.bidang');
     Route::post('bidang', 'bidangStore')->name('.bidangStore')->middleware(['role:admin|kadiv']);

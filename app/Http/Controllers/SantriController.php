@@ -212,6 +212,15 @@ class SantriController extends Controller
         return back()->with('alert', $alert);
     }
 
+    public function assigneRemove(Santri $santri)
+    {
+        $alert = $this::execute(
+            try: fn () => $santri->delete(),
+            message: 'hapus santri'
+        );
+        return back()->with('alert', $alert);
+    }
+
     public function bidangStore(Request $request)
     {
         $alert = $this::execute(
