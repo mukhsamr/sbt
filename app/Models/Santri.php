@@ -67,21 +67,21 @@ class Santri extends Model
         $query->addSelect('semester_id')->where('semester_id', Semester::active());
     }
 
-    public function scopeWithKelasPayung($query)
-    {
-        $query->addSelect([
-            'kelas_payung' => KelasPayung::select('kelas')
-                ->whereColumn('id', 'kelas_payung_id')
-                ->take(1)
-        ]);
-    }
+    // public function scopeWithKelasPayung($query)
+    // {
+    //     $query->addSelect([
+    //         'kelas_payung' => KelasPayung::select('kelas')
+    //             ->whereColumn('id', 'kelas_payung_id')
+    //             ->take(1)
+    //     ]);
+    // }
 
-    public function scopeWithKelasPondok($query)
-    {
-        $query->addSelect([
-            'kelas_pondok' => KelasPondok::select('kelas')
-                ->whereColumn('id', 'kelas_pondok_id')
-                ->take(1)
-        ]);
-    }
+    // public function scopeWithKelasPondok($query)
+    // {
+    //     $query->addSelect([
+    //         'kelas_pondok' => KelasPondok::select('kelas')
+    //             ->whereColumn('id', 'kelas_pondok_id')
+    //             ->take(1)
+    //     ]);
+    // }
 }

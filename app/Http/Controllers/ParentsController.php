@@ -18,7 +18,7 @@ class ParentsController extends Controller
         $request->limit ??= 10;
 
         return Inertia::render('Parents/DaftarParents', [
-            'daftar' => Parents::select('id', 'nama_ayah', 'nama_ibu')
+            'daftar' => Parents::select('id', 'nama_ayah', 'nama_ibu', 'kk')
                 ->withCount('students as jumlah_siswa')
                 ->orderBy('nama_ayah')
 

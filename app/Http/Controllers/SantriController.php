@@ -32,16 +32,13 @@ class SantriController extends Controller
 
         return Inertia::render('Santri/DaftarSantri', [
             'daftar' => Santri::isActive()
-                ->with('student:id,nama,tanggal_lahir,foto')
-                ->select('id', 'student_id')
+                ->select('*')
+                ->with(['student:id,nama,tanggal_lahir,foto', 'kelasPayung', 'kelasPondok'])
 
                 ->when($request->limit, fn ($query) => $query->limit($request->limit))
                 ->when($request->nama, fn ($query) => $query->whereRelation('student', 'nama', 'like', "%$request->nama%"))
                 ->when($request->gender, fn ($query) => $query->whereRelation('student', 'gender',  $request->gender))
                 ->when($request->kelas_payung, fn ($query) => $query->where('kelas_payung_id', $request->kelas_payung))
-
-                ->withKelasPayung()
-                ->withKelasPondok()
 
                 ->get()
                 ->sortBy('student.nama')
@@ -49,6 +46,7 @@ class SantriController extends Controller
                 ->values(),
 
             'kelas_payung' => KelasPayung::orderBy('kelas')->get(),
+            'kelas_pondok' => KelasPondok::orderBy('kelas')->get(),
             'cari' => [
                 'nama' => $request->nama,
                 'kelas_payung' => $request->kelas_payung
@@ -207,6 +205,19 @@ class SantriController extends Controller
         $alert = $this::execute(
             try: fn () => Santri::create($data),
             message: "assigne siswa"
+        );
+
+        return back()->with('alert', $alert);
+    }
+
+    public function assigneUpdate(Request $request)
+    {
+        $alert = $this::execute(
+            try: fn () => Santri::where('id', $request->id)->update([
+                'kelas_payung_id' => $request->kelas_payung_id,
+                'kelas_pondok_id' => $request->kelas_pondok_id,
+            ]),
+            message: 'update santri'
         );
 
         return back()->with('alert', $alert);

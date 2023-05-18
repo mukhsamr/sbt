@@ -111,8 +111,8 @@ function storeBidang() {
 }
 
 
-function tes() {
-    console.log('o')
+function setLevel(item) {
+    return item > 3 ? 2 : 1
 }
 
 </script>
@@ -127,8 +127,7 @@ function tes() {
                 <div class="space-y-2">
                     <div>{{ santri.student.nama }}</div>
                     <div class="text-sm text-slate-400">{{
-                        'Kelas ' + santri.kelas_payung?.kelas + ' - Level ' +
-                            santri.kelas_pondok?.kelas
+                        'Kelas ' + santri.kelas_payung?.kelas + ' - Level ' + setLevel(santri.kelas_pondok?.kelas)
                     }}</div>
                 </div>
             </div>

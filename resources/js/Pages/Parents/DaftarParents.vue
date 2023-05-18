@@ -77,6 +77,7 @@ watch(formCari, debounce((item) => {
             <template #head>
                 <Th>Ayah</Th>
                 <Th>Ibu</Th>
+                <Th>KK</Th>
                 <Th>Jumlah Siswa</Th>
                 <Th>Profil</Th>
                 <Th v-if="userRole()">Aksi</Th>
@@ -84,6 +85,7 @@ watch(formCari, debounce((item) => {
             <template #body="{ item }">
                 <Td>{{ item.nama_ayah }}</Td>
                 <Td>{{ item.nama_ibu }}</Td>
+                <Td>{{ item.kk }}</Td>
                 <Td>{{ item.jumlah_siswa }}</Td>
                 <Td>
                     <BtnIcon :icon="InboxIcon" class="text-amber-600" @click="toProfil(item)">Biodata</BtnIcon>
